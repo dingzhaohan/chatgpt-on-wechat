@@ -65,5 +65,8 @@ def create_bot(bot_type):
         from bot.moonshot.moonshot_bot import MoonshotBot
         return MoonshotBot()
 
+    elif bot_type == const.DP:
+        from bot.dp.dp_bot import DPBot
+        return DPBot()
 
     raise RuntimeError

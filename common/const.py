@@ -1,4 +1,5 @@
 # bot_type
+DP = "dp"
 OPEN_AI = "openAI"
 CHATGPT = "chatGPT"
 BAIDU = "baidu"
