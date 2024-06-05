@@ -1,6 +1,7 @@
 # encoding:utf-8
 
 import time
+import uuid
 
 import openai
 import openai.error
@@ -16,6 +17,7 @@ from common.log import logger
 from common.token_bucket import TokenBucket
 from config import conf, load_config
 
+chat_url = 'https://chatbohr.test.dp.tech/'
 
 # OpenAI对话模型API (可用)
 class DPBot(Bot, OpenAIImage):
@@ -49,7 +51,7 @@ class DPBot(Bot, OpenAIImage):
             elif query == "#清除所有":
                 self.sessions.clear_all_session()
                 reply = Reply(ReplyType.INFO, "所有人记忆已清除")
-            elif query == "#更新配置":
+            elif query == "*更新配置":
                 load_config()
                 reply = Reply(ReplyType.INFO, "配置已更新")
             if reply:
@@ -114,13 +116,53 @@ class DPBot(Bot, OpenAIImage):
                 args = self.args
             if "https:" in session.messages[-1]["content"]:     
                 import requests
+                import re
                 data = {
                     "message": session.messages[-1]["content"]
                 }
-                print(data)
+
                 url = "http://47.253.33.28:10001/reply_wx"
                 response = requests.post(url, json=data)
                 result = response.text
+
+
+                create_session_url = chat_url + "api/v1/session/create"
+                create_session_data = {
+                    "arxiv_id": "",
+                    "all_text": "",
+                    "pdf_url":  ""
+                }
+                create_session_response = requests.post(create_session_url,json=create_session_data)
+                session_id = create_session_response.json()["session_id"]
+
+                add_url = chat_url + "api/v1/session/add"
+                add_user_data = {
+                    "session_id": session_id,
+                    "role": "user",
+                    "content": session.messages[-1]["content"]
+                }
+                requests.post(add_url, json=add_user_data)
+
+
+                add_system_data = {
+                    "session_id": session_id,
+                    "role": "system",
+                    "content": result
+                }
+
+                requests.post(add_url, json=add_system_data)
+
+
+                # 匹配链接及其后面的文本
+                pattern = r'\(https?://[^\s\)]+\)\s*(.*)'
+                match = re.search(pattern, result)
+
+                following_text = match.group(1).replace('\\n', '')[:75]
+                print(following_text)
+
+                result = following_text+ "…… " + "点此查看全部解读：(https://bohrium.dp.tech/paper/?session_id=" + session_id + ")"
+
+
                 return {
                     "total_tokens": 1000,
                     "completion_tokens": 1000,
