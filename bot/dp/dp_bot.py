@@ -124,18 +124,14 @@ class DPBot(Bot, OpenAIImage):
                 url = "http://47.253.33.28:10001/reply_wx"
                 response = requests.post(url, json=data)
                 result = response.text
-                pattern = r'arxiv/(\d+\.\d+)'
-                arxiv_id = re.search(pattern, result).group(1)
                 logger.info("[DP] result={}".format(result))
-                logger.info("[DP] arxiv_id={}".format(arxiv_id))
-
                 create_session_url = chat_url + "api/v1/session/create"
                 create_session_data = {
-                    "arxiv_id": arxiv_id,
+                    "arxiv_id": "",
                     "all_text": "",
-                    "pdf_url":  ""
+                    "pdf_url": ""
                 }
-                create_session_response = requests.post(create_session_url,json=create_session_data)
+                create_session_response = requests.post(create_session_url, json=create_session_data)
                 session_id = create_session_response.json()["session_id"]
                 logger.info("[DP] session_id={}".format(session_id))
                 add_url = chat_url + "api/v1/session/add"
@@ -146,7 +142,6 @@ class DPBot(Bot, OpenAIImage):
                 }
                 requests.post(add_url, json=add_user_data)
 
-
                 add_system_data = {
                     "session_id": session_id,
                     "role": "system",
@@ -155,16 +150,95 @@ class DPBot(Bot, OpenAIImage):
 
                 requests.post(add_url, json=add_system_data)
 
-
                 # 匹配链接及其后面的文本
                 pattern = r'\(https?://[^\s\)]+\)\s*(.*)'
                 match = re.search(pattern, result)
+                if match :
+                    following_text = match.group(1).replace('\\n', '')[:75]
+                else:
+                    following_text = result.replace('\\n', '')[:75]
 
-                following_text = match.group(1).replace('\\n', '')[:75]
-
-
-                result = following_text+ "…… " + "点此查看全部解读：(https://bohrium.test.dp.tech/paper/landing?sessionId=" + session_id + "&arxivId=" + arxiv_id + ")"
+                result = following_text + "…… " + "点此查看全部解读：(https://bohrium-square.test.dp.tech/paper/landing?sessionId=" + session_id +")"
                 logger.info("[DP] wx-result={}".format(result))
+
+
+                # if "https:" in result:
+                #     pattern = r'arxiv/(\d+\.\d+)'
+                #     arxiv_id = re.search(pattern, result).group(1)
+                #     logger.info("[DP] arxiv_id={}".format(arxiv_id))
+                #
+                #     create_session_url = chat_url + "api/v1/session/create"
+                #     create_session_data = {
+                #         "arxiv_id": arxiv_id,
+                #         "all_text": "",
+                #         "pdf_url":  ""
+                #     }
+                #     create_session_response = requests.post(create_session_url,json=create_session_data)
+                #     session_id = create_session_response.json()["session_id"]
+                #     logger.info("[DP] session_id={}".format(session_id))
+                #     add_url = chat_url + "api/v1/session/add"
+                #     add_user_data = {
+                #         "session_id": session_id,
+                #         "role": "user",
+                #         "content": session.messages[-1]["content"]
+                #     }
+                #     requests.post(add_url, json=add_user_data)
+                #
+                #
+                #     add_system_data = {
+                #         "session_id": session_id,
+                #         "role": "system",
+                #         "content": result
+                #     }
+                #
+                #     requests.post(add_url, json=add_system_data)
+                #
+                #
+                #     # 匹配链接及其后面的文本
+                #     pattern = r'\(https?://[^\s\)]+\)\s*(.*)'
+                #     match = re.search(pattern, result)
+                #
+                #     following_text = match.group(1).replace('\\n', '')[:75]
+                #
+                #
+                #     result = following_text+ "…… " + "点此查看全部解读：(https://bohrium.test.dp.tech/paper/landing?sessionId=" + session_id + "&arxivId=" + arxiv_id + ")"
+                #     logger.info("[DP] wx-result={}".format(result))
+                # elif  "https://bohrium.dp.tech/paper/arxiv" in session.messages[-1]["content"]:
+                #     pattern = r'arxiv/(\d+\.\d+)'
+                #     arxiv_id = re.search(pattern, session.messages[-1]["content"]).group(1)
+                #     logger.info("[DP] arxiv_id={}".format(arxiv_id))
+                #
+                #     create_session_url = chat_url + "api/v1/session/create"
+                #     create_session_data = {
+                #         "arxiv_id": arxiv_id,
+                #         "all_text": "",
+                #         "pdf_url": ""
+                #     }
+                #     create_session_response = requests.post(create_session_url, json=create_session_data)
+                #     session_id = create_session_response.json()["session_id"]
+                #     logger.info("[DP] session_id={}".format(session_id))
+                #     add_url = chat_url + "api/v1/session/add"
+                #     add_user_data = {
+                #         "session_id": session_id,
+                #         "role": "user",
+                #         "content": session.messages[-1]["content"]
+                #     }
+                #     requests.post(add_url, json=add_user_data)
+                #
+                #     add_system_data = {
+                #         "session_id": session_id,
+                #         "role": "system",
+                #         "content": result
+                #     }
+                #
+                #     requests.post(add_url, json=add_system_data)
+                #
+                #
+                #     following_text = result[:75]
+                #
+                #     result = following_text + "…… " + "点此查看全部解读：(https://bohrium.test.dp.tech/paper/landing?sessionId=" + session_id + "&arxivId=" + arxiv_id + ")"
+                #     logger.info("[DP] wx-result={}".format(result))
+                #
 
                 return {
                     "total_tokens": 1000,
