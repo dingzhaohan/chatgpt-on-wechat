@@ -158,7 +158,7 @@ class DPBot(Bot, OpenAIImage):
                 else:
                     following_text = result.replace('\\n', '')[:75]
 
-                result = following_text + "…… " + "点此查看全部解读：(https://bohrium-square.test.dp.tech/paper/landing?sessionId=" + session_id +")"
+                result = following_text + "…… " + "点此查看全部解读：( https://bohrium-square.test.dp.tech/paper/landing?sessionId=" + session_id +" )"
                 logger.info("[DP] wx-result={}".format(result))
 
 
