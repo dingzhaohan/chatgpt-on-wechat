@@ -25,6 +25,7 @@ class DPBot(Bot, OpenAIImage):
         super().__init__()
         openai.api_key = "sk-e7W5DteJzLagdIXR4743B34b8b374c3fA154F6A3B5B11a9a"
         openai.api_base = "http://39.101.164.143:50001/v1"
+
         self.sessions = SessionManager(DPSession, model=conf().get("model") or "gpt-3.5-turbo")
         self.args = {
             "model": conf().get("model") or "gpt-3.5-turbo",  # 对话模型的名称
@@ -157,8 +158,8 @@ class DPBot(Bot, OpenAIImage):
                     following_text = match.group(1).replace('\\n', '')[:75]
                 else:
                     following_text = result.replace('\\n', '')[:75]
-
-                result = following_text + "…… " + "点此查看全部解读：( https://bohrium-square.test.dp.tech/paper/landing?sessionId=" + session_id +" )"
+                wx_url = conf().get("wx-url")
+                result = following_text + "…… " + "点此查看全部解读：( https://" +wx_url+ "/paper/landing?sessionId=" + session_id +" )"
                 logger.info("[DP] wx-result={}".format(result))
 
 
