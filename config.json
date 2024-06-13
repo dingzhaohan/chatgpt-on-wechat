@@ -1,7 +1,8 @@
 {
   "channel_type": "wx",
   "model": "dp",
-  "wx-url": "bohrium-square.test.dp.tech",
+  "chat_url": "https://chatbohr.test.dp.tech/",
+  "wx_url": "bohrium-square.test.dp.tech",
   "open_ai_api_key": "",
   "claude_api_key": "YOUR API KEY",
   "text_to_image": "dall-e-2",

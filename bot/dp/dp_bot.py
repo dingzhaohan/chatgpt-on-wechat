@@ -17,7 +17,7 @@ from common.log import logger
 from common.token_bucket import TokenBucket
 from config import conf, load_config
 
-chat_url = 'https://chatbohr.test.dp.tech/'
+# chat_url = 'https://chatbohr.test.dp.tech/'
 
 # OpenAI对话模型API (可用)
 class DPBot(Bot, OpenAIImage):
@@ -121,7 +121,7 @@ class DPBot(Bot, OpenAIImage):
                 data = {
                     "message": session.messages[-1]["content"]
                 }
-
+                chat_url = conf().get("chat_url")
                 url = "http://47.253.33.28:10001/reply_wx"
                 response = requests.post(url, json=data)
                 result = response.text
@@ -158,7 +158,7 @@ class DPBot(Bot, OpenAIImage):
                     following_text = match.group(1).replace('\\n', '')[:75]
                 else:
                     following_text = result.replace('\\n', '')[:75]
-                wx_url = conf().get("wx-url")
+                wx_url = conf().get("wx_url")
                 result = following_text + "…… " + "点此查看全部解读：( https://" +wx_url+ "/paper/landing?sessionId=" + session_id +" )"
                 logger.info("[DP] wx-result={}".format(result))
 

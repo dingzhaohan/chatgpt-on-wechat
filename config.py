@@ -11,7 +11,8 @@ from common.log import logger
 # 将所有可用的配置项写在字典里, 请使用小写字母
 # 此处的配置值无实际意义，程序不会读取此处的配置，仅用于提示格式，请将配置加入到config.json中
 available_setting = {
-    "wx-url":"bohrium-square.test.dp.tech",
+    "wx_url":"bohrium-square.test.dp.tech",
+    "chat_url":"https://chatbohr.test.dp.tech/",
     # openai api配置
     "open_ai_api_key": "",  # openai api key
     # openai apibase，当use_azure_chatgpt为true时，需要设置对应的api base
