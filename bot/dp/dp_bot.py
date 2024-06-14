@@ -155,9 +155,9 @@ class DPBot(Bot, OpenAIImage):
                 pattern = r'\(https?://[^\s\)]+\)\s*(.*)'
                 match = re.search(pattern, result)
                 if match :
-                    following_text = match.group(1).replace('\\n', '')[:75]
+                    following_text = match.group(1).replace('\\n', '')[:250]
                 else:
-                    following_text = result.replace('\\n', '')[:75]
+                    following_text = result.replace('\\n', '')[:250]
                 wx_url = conf().get("wx_url")
                 result = following_text + "…… " + "点此查看全部解读：( https://" +wx_url+ "/paper/landing?sessionId=" + session_id +" )"
                 logger.info("[DP] wx-result={}".format(result))
